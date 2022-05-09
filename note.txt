@@ -1,0 +1,2 @@
+- {DONE} creating smart contracts
+- {DONE} testing contracts 
