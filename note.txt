@@ -1,2 +1,3 @@
 - {DONE} creating smart contracts
 - {DONE} testing contracts 
+- {DONE} setting up react with truffle
