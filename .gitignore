@@ -10,7 +10,6 @@ node_modules
 
 # production
 /build
-abis
 # misc
 .DS_Store
 .env.local
