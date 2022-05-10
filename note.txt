@@ -1,3 +1,6 @@
 - {DONE} creating smart contracts
 - {DONE} testing contracts 
-- {DONE} setting up react with truffle
+- {DONE} setting up react with truffle and loading contracts in react
+- {DONE} interacting with DBank smart contract in react
+note important now:
+- {TODO} add loading when depositing money

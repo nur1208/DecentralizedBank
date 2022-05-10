@@ -171,11 +171,9 @@ contract("DBank", ([deployer, user, user2]) => {
       it("user should receive proper amount of interest", async () => {
         //time synchronization problem make us check the 1-3s range for 2s deposit time
         try {
-          
           balance = Number(await token.balanceOf(user));
           expect(balance).to.be.above(0);
           console.log("here");
-  
           console.log({
             balance,
             interestPerSecond,
@@ -185,7 +183,6 @@ contract("DBank", ([deployer, user, user2]) => {
           expect(balance).to.be.below(interestPerSecond * 8);
         } catch (error) {
           console.log({ error });
-                    
         }
       });
 

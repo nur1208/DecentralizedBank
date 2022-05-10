@@ -1,0 +1,297 @@
+import { useEffect, useState } from "react";
+import { Tabs, Tab } from "react-bootstrap";
+// import { init, mintToken } from "./Web3Client";
+import Token from "./abis/Token.json";
+import DBank from "./abis/DBank.json";
+
+import Web3 from "web3";
+import dbank from "./dbank.png";
+function App() {
+  const [account, setAccount] = useState(null);
+  const [balance, setBalance] = useState(0);
+  const [web3, setWeb3] = useState(null);
+  const [dBank, setDBank] = useState(null);
+  const [token, setToken] = useState(null);
+  const [dBankAddress, setDBankAddress] = useState("");
+  const [depositAmount, setDepositAmount] = useState("");
+  const [DBCBalance, setDBCBalance] = useState(0);
+  const handlerCallingBlackChain = async (
+    functionName,
+    sendObject
+  ) => {
+    console.log("handlerCallingBlackChain called");
+
+    if (dBank !== null && dBank !== undefined) {
+      try {
+        console.log(dBank.methods);
+        console.log(dBank.methods[functionName]);
+
+        await dBank.methods[functionName]().send(sendObject);
+      } catch (error) {
+        console.log(`Error, ${functionName}: `, error);
+      }
+    }
+  };
+
+  const deposit = async (amount) => {
+    console.log("deposit called");
+
+    await handlerCallingBlackChain("deposit", {
+      from: account,
+      value: amount.toString(),
+    });
+  };
+
+  const withdraw = async (amount) => {
+    console.log("withdraw called");
+
+    await handlerCallingBlackChain("withdraw", {
+      from: account,
+    });
+  };
+
+  const loadBlockchainData = async (dispatch) => {
+    console.log("loadBlockchainData called");
+    if (typeof window.ethereum !== "undefined") {
+      const web3Local = new Web3(window.ethereum);
+      const netId = await web3Local.eth.net.getId();
+      const selectedAccount = (
+        await web3Local.eth.getAccounts()
+      )[0];
+
+      console.log({ account: selectedAccount });
+      //load balance
+      if (selectedAccount !== "undefined") {
+        const localBalance = await web3Local.eth.getBalance(
+          selectedAccount
+        );
+
+        setAccount(selectedAccount);
+        setBalance(localBalance);
+        setWeb3(web3Local);
+      } else {
+        window.alert("Please login with MetaMask");
+      }
+
+      //load contracts
+
+      try {
+        const dBankLocalAddress = DBank.networks[netId].address;
+        const tokenLocal = new web3Local.eth.Contract(
+          Token.abi,
+          Token.networks[netId].address
+        );
+
+        const dBankLocal = new web3Local.eth.Contract(
+          DBank.abi,
+          dBankLocalAddress
+        );
+        const localDBCBalance = await tokenLocal.methods
+          .balanceOf(selectedAccount)
+          .call();
+        console.log(await tokenLocal.methods.decimals().call());
+        console.log(
+          await dBankLocal.methods
+            .isDeposited(selectedAccount)
+            .call()
+        );
+
+        setDBCBalance(localDBCBalance);
+        setToken(tokenLocal);
+        setDBank(dBankLocal);
+        setDBankAddress(dBankLocalAddress);
+      } catch (error) {
+        console.log("Error", error);
+        console.log(error);
+
+        window.alert(
+          "Contracts not deployed to the current network"
+        );
+      }
+    } else {
+      window.alert("Please install MetaMask");
+    }
+  };
+  useEffect(() => {
+    (async () => {
+      await loadBlockchainData();
+      // await deposit(10 ** 16);
+    })();
+  }, []);
+  // const [balance, setBalance] = useState(0);
+
+  // const mint = () => {};
+  return (
+    // <div className="App">
+    //   app {balance}{" "}
+    //   <button onClick={async () => await deposit(10 ** 16)}>
+    //     deposit
+    //   </button>{" "}
+    // </div>
+    <div className="text-monospace">
+      <nav className="navbar navbar-dark  fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a
+          className="navbar-brand col-sm-3 col-md-2 mr-0"
+          href="http://www.dappuniversity.com/bootcamp"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src={dbank}
+              className="App-logo"
+              alt="logo"
+              height="32"
+            />
+            <b style={{ marginLeft: "10px" }}>d₿ank</b>
+          </div>
+        </a>
+      </nav>
+      <div className="container-fluid pt-3 mt-5 text-center">
+        <h1>Welcome to d₿ank</h1>
+        <h2>{account}</h2>
+        <h4>
+          your current {(Number(balance) / 10 ** 18).toFixed(4)}{" "}
+          eth
+        </h4>
+        <h4>
+          your current{" "}
+          {(Number(DBCBalance) / 10 ** 18).toFixed(8)} DBC
+        </h4>
+        <div className="row">
+          <main
+            role="main"
+            className="col-lg-12 d-flex text-center"
+          >
+            <div className="content mr-auto ml-auto">
+              <Tabs
+                defaultActiveKey="profile"
+                id="uncontrolled-tab-example"
+              >
+                <Tab eventKey="deposit" title="Deposit">
+                  <div>
+                    <br></br>
+                    How much do you want to deposit?
+                    <br></br>
+                    (min. amount is 0.01 ETH)
+                    <br></br>
+                    (1 deposit is possible at the time)
+                    <br></br>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        let amountLocal = depositAmount;
+                        amountLocal = amountLocal * 10 ** 18; //convert to wei
+                        deposit(amountLocal);
+                      }}
+                    >
+                      <div className="form-group mr-sm-2">
+                        <br></br>
+                        <input
+                          id="depositAmount"
+                          step="0.01"
+                          type="number"
+                          placeholder="amount..."
+                          onChange={(e) =>
+                            setDepositAmount(e.target.value)
+                          }
+                          required
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                      >
+                        DEPOSIT
+                      </button>
+                    </form>
+                  </div>
+                </Tab>
+                <Tab eventKey="withdraw" title="Withdraw">
+                  <br></br>
+                  Do you want to withdraw + take interest?
+                  <br></br>
+                  <br></br>
+                  <div>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      onClick={(e) => withdraw(e)}
+                    >
+                      WITHDRAW
+                    </button>
+                  </div>
+                </Tab>
+                {/* <Tab eventKey="borrow" title="Borrow">
+                  <div>
+                    <br></br>
+                    Do you want to borrow tokens?
+                    <br></br>
+                    (You'll get 50% of collateral, in Tokens)
+                    <br></br>
+                    Type collateral amount (in ETH)
+                    <br></br>
+                    <br></br>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        let amount = this.borrowAmount.value;
+                        amount = amount * 10 ** 18; //convert to wei
+                        this.borrow(amount);
+                      }}
+                    >
+                      <div className="form-group mr-sm-2">
+                        <input
+                          id="borrowAmount"
+                          step="0.01"
+                          type="number"
+                          ref={(input) => {
+                            this.borrowAmount = input;
+                          }}
+                          className="form-control form-control-md"
+                          placeholder="amount..."
+                          required
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                      >
+                        BORROW
+                      </button>
+                    </form>
+                  </div>
+                </Tab>
+                <Tab eventKey="payOff" title="Payoff">
+                  <div>
+                    <br></br>
+                    Do you want to payoff the loan?
+                    <br></br>
+                    (You'll receive your collateral - fee)
+                    <br></br>
+                    <br></br>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      onClick={(e) => this.payOff(e)}
+                    >
+                      PAYOFF
+                    </button>
+                  </div>
+                </Tab> */}
+              </Tabs>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
