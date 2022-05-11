@@ -6,6 +6,7 @@
 - {DONE} removing yarn
 - {DONE} adding loading functionality
 - {DONE} adding loading functionality part 2
+- {DONE} updating balances when depositing and withdrawing 
 note important now:
 - {TODO} add loading when depositing money
 - {TODO} update user eth and DBC balance when they changes

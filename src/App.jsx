@@ -43,7 +43,13 @@ function App() {
         console.log(dBank.methods[functionName]);
         // await mintToken();
         await dBank.methods[functionName]().send(sendObject);
+        const localBalance = await web3.eth.getBalance(account);
+        const localDBCBalance = await token.methods
+          .balanceOf(account)
+          .call();
+        setDBCBalance(localDBCBalance);
         setStatus(APP_STATUS.ACTION_SUCCESS);
+        setBalance(localBalance);
       } catch (error) {
         console.log(`Error, ${functionName}: `, error);
         setStatus(APP_STATUS.ACTION_FAILED);
