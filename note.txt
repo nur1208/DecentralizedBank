@@ -8,6 +8,7 @@
 - {DONE} adding loading functionality part 2
 - {DONE} updating balances when depositing and withdrawing 
 - {DONE} creating useWeb3Client custom hook
+- {DONE} adding readme file
 note important now:
 - {TODO} add loading when depositing money
 - {TODO} update user eth and DBC balance when they changes
