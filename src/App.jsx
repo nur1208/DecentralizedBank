@@ -153,7 +153,10 @@ function App() {
           </div>
         </a>
       </nav>
-      <div className="container-fluid pt-3 mt-5 text-center">
+      <div
+        className="container-fluid pt-3 mt-5 text-center"
+        style={{ height: "75vh" }}
+      >
         <h1>Welcome to d₿ank</h1>
         <h2>{account}</h2>
         <h4>
@@ -162,7 +165,7 @@ function App() {
         </h4>
         <h4>
           your current{" "}
-          {(Number(DBCBalance) / 10 ** 18).toFixed(8)} DBC
+          {(Number(DBCBalance) / 10 ** 18).toFixed(10)} DBC
         </h4>
         <div className="row">
           <main
@@ -290,6 +293,15 @@ function App() {
           </main>
         </div>
       </div>
+      <footer class="d-flex flex-wrap justify-content-center align-items-center py-3 my-4 border-top">
+        <div>
+          <span class="text-muted">Developer: NUR</span>
+          <span class="text-muted ml-2">
+            email: medo0o6665@gmail.com
+          </span>
+          <span class="text-muted ml-2">github: nur1208</span>
+        </div>
+      </footer>
     </div>
   );
 }
