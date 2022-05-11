@@ -37,10 +37,13 @@ function App() {
 
     if (dBank !== null && dBank !== undefined) {
       try {
+        setStatus(APP_STATUS.ACTION_LOADING);
+
         console.log(dBank.methods);
         console.log(dBank.methods[functionName]);
         // await mintToken();
         await dBank.methods[functionName]().send(sendObject);
+        setStatus(APP_STATUS.ACTION_SUCCESS);
       } catch (error) {
         console.log(`Error, ${functionName}: `, error);
         setStatus(APP_STATUS.ACTION_FAILED);
@@ -50,12 +53,10 @@ function App() {
 
   const deposit = async (amount) => {
     console.log("deposit called");
-    setStatus(APP_STATUS.ACTION_LOADING);
     await handlerCallingBlackChain("deposit", {
       from: account,
       value: amount.toString(),
     });
-    setStatus(APP_STATUS.ACTION_SUCCESS);
   };
 
   const withdraw = async (amount) => {
