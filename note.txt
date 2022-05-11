@@ -3,6 +3,7 @@
 - {DONE} setting up react with truffle and loading contracts in react
 - {DONE} interacting with DBank smart contract in react
 - {DONE} deployed DBank smart constructor to rinkeby testnet
+- {DONE} removing yarn
 note important now:
 - {TODO} add loading when depositing money
 - {TODO} update user eth and DBC balance when they changes
