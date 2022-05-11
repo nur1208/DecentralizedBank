@@ -25,7 +25,7 @@ function App() {
       try {
         console.log(dBank.methods);
         console.log(dBank.methods[functionName]);
-        await mintToken();
+        // await mintToken();
         await dBank.methods[functionName]().send(sendObject);
       } catch (error) {
         console.log(`Error, ${functionName}: `, error);
