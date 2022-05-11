@@ -1,26 +1,26 @@
 {
   "files": {
     "main.css": "/DecentralizedBank/static/css/main.2d7e1e1b.chunk.css",
-    "main.js": "/DecentralizedBank/static/js/main.3ec6e6ae.chunk.js",
-    "main.js.map": "/DecentralizedBank/static/js/main.3ec6e6ae.chunk.js.map",
+    "main.js": "/DecentralizedBank/static/js/main.a35bfd5f.chunk.js",
+    "main.js.map": "/DecentralizedBank/static/js/main.a35bfd5f.chunk.js.map",
     "runtime-main.js": "/DecentralizedBank/static/js/runtime-main.cd31a971.js",
     "runtime-main.js.map": "/DecentralizedBank/static/js/runtime-main.cd31a971.js.map",
     "static/css/2.f14547f9.chunk.css": "/DecentralizedBank/static/css/2.f14547f9.chunk.css",
-    "static/js/2.13b0e8b6.chunk.js": "/DecentralizedBank/static/js/2.13b0e8b6.chunk.js",
-    "static/js/2.13b0e8b6.chunk.js.map": "/DecentralizedBank/static/js/2.13b0e8b6.chunk.js.map",
+    "static/js/2.6318027c.chunk.js": "/DecentralizedBank/static/js/2.6318027c.chunk.js",
+    "static/js/2.6318027c.chunk.js.map": "/DecentralizedBank/static/js/2.6318027c.chunk.js.map",
     "static/js/3.3426efb6.chunk.js": "/DecentralizedBank/static/js/3.3426efb6.chunk.js",
     "static/js/3.3426efb6.chunk.js.map": "/DecentralizedBank/static/js/3.3426efb6.chunk.js.map",
     "index.html": "/DecentralizedBank/index.html",
     "static/css/2.f14547f9.chunk.css.map": "/DecentralizedBank/static/css/2.f14547f9.chunk.css.map",
     "static/css/main.2d7e1e1b.chunk.css.map": "/DecentralizedBank/static/css/main.2d7e1e1b.chunk.css.map",
-    "static/js/2.13b0e8b6.chunk.js.LICENSE.txt": "/DecentralizedBank/static/js/2.13b0e8b6.chunk.js.LICENSE.txt",
+    "static/js/2.6318027c.chunk.js.LICENSE.txt": "/DecentralizedBank/static/js/2.6318027c.chunk.js.LICENSE.txt",
     "static/media/dbank.49ac29b5.png": "/DecentralizedBank/static/media/dbank.49ac29b5.png"
   },
   "entrypoints": [
     "static/js/runtime-main.cd31a971.js",
     "static/css/2.f14547f9.chunk.css",
-    "static/js/2.13b0e8b6.chunk.js",
+    "static/js/2.6318027c.chunk.js",
     "static/css/main.2d7e1e1b.chunk.css",
-    "static/js/main.3ec6e6ae.chunk.js"
+    "static/js/main.a35bfd5f.chunk.js"
   ]
 }
