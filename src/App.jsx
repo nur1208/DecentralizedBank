@@ -1,11 +1,22 @@
 import { useEffect, useState } from "react";
-import { Tabs, Tab } from "react-bootstrap";
+import { Tabs, Tab, Spinner } from "react-bootstrap";
 import { init, mintToken } from "./Web3Client";
 import Token from "./abis/Token.json";
 import DBank from "./abis/DBank.json";
 
 import Web3 from "web3";
 import dbank from "./dbank.png";
+
+const APP_STATUS = {
+  RUNNING: "RUNNING",
+  CONTRACTS_LOADING: "CONTRACTS_LOADING",
+  CONTRACTS_SUCCESS: "CONTRACTS_SUCCESS",
+  CONTRACTS_FAILED: "CONTRACTS_FAILED",
+  ACTION_LOADING: "ACTION_LOADING",
+  ACTION_SUCCESS: "ACTION_SUCCESS",
+  ACTION_FAILED: "ACTION_FAILED",
+};
+
 function App() {
   const [account, setAccount] = useState(null);
   const [balance, setBalance] = useState(0);
@@ -15,6 +26,9 @@ function App() {
   const [dBankAddress, setDBankAddress] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
   const [DBCBalance, setDBCBalance] = useState(0);
+  const [status, setStatus] = useState(
+    APP_STATUS.CONTRACTS_LOADING
+  );
   const handlerCallingBlackChain = async (
     functionName,
     sendObject
@@ -29,17 +43,19 @@ function App() {
         await dBank.methods[functionName]().send(sendObject);
       } catch (error) {
         console.log(`Error, ${functionName}: `, error);
+        setStatus(APP_STATUS.ACTION_FAILED);
       }
     }
   };
 
   const deposit = async (amount) => {
     console.log("deposit called");
-
+    setStatus(APP_STATUS.ACTION_LOADING);
     await handlerCallingBlackChain("deposit", {
       from: account,
       value: amount.toString(),
     });
+    setStatus(APP_STATUS.ACTION_SUCCESS);
   };
 
   const withdraw = async (amount) => {
@@ -115,8 +131,9 @@ function App() {
   useEffect(() => {
     (async () => {
       await init();
-      console.log("here");
+
       await loadBlockchainData();
+      setStatus(APP_STATUS.RUNNING);
       // await deposit(10 ** 16);
     })();
   }, []);
@@ -155,85 +172,107 @@ function App() {
           </div>
         </a>
       </nav>
-      <div
-        className="container-fluid pt-3 mt-5 text-center"
-        style={{ height: "75vh" }}
-      >
-        <h1>Welcome to d₿ank</h1>
-        <h2>{account}</h2>
-        <h4>
-          your current {(Number(balance) / 10 ** 18).toFixed(4)}{" "}
-          eth
-        </h4>
-        <h4>
-          your current{" "}
-          {(Number(DBCBalance) / 10 ** 18).toFixed(10)} DBC
-        </h4>
-        <div className="row">
-          <main
-            role="main"
-            className="col-lg-12 d-flex text-center"
+      {status === APP_STATUS.CONTRACTS_LOADING ? (
+        <div
+          // className="flex-md-nowrap"
+          style={{
+            height: "75vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            gap: "1rem",
+          }}
+        >
+          <h2>loading smart contracts</h2>
+
+          <Spinner animation="border" role="status">
+            {/* <span className="visually-hidden">Loading...</span> */}
+          </Spinner>
+        </div>
+      ) : (
+        <div
+          className="container-fluid pt-3 mt-5 text-center"
+          style={{ height: "75vh" }}
+        >
+          <h1>Welcome to d₿ank</h1>
+          <h2>{account}</h2>
+          <div
+            className="d-flex pl-4 justify-content-center align-items-center"
+            style={{ gap: "5rem" }}
           >
-            <div className="content mr-auto ml-auto">
-              <Tabs
-                defaultActiveKey="profile"
-                id="uncontrolled-tab-example"
-              >
-                <Tab eventKey="deposit" title="Deposit">
-                  <div>
+            <h4>
+              {(Number(balance) / 10 ** 18).toFixed(4)} eth
+            </h4>
+            <h4>
+              {(Number(DBCBalance) / 10 ** 18).toFixed(10)} DBC
+            </h4>
+          </div>
+          <div className="row">
+            <main
+              role="main"
+              className="col-lg-12 d-flex text-center"
+            >
+              <div className="content mr-auto ml-auto">
+                <Tabs
+                  defaultActiveKey="profile"
+                  id="uncontrolled-tab-example"
+                >
+                  <Tab eventKey="deposit" title="Deposit">
+                    <div>
+                      <br></br>
+                      How much do you want to deposit?
+                      <br></br>
+                      (min. amount is 0.01 ETH)
+                      <br></br>
+                      (1 deposit is possible at the time)
+                      <br></br>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          let amountLocal = depositAmount;
+                          amountLocal = amountLocal * 10 ** 18; //convert to wei
+                          deposit(amountLocal);
+                        }}
+                      >
+                        <div className="form-group mr-sm-2">
+                          <br></br>
+                          <input
+                            id="depositAmount"
+                            step="0.01"
+                            type="number"
+                            placeholder="amount..."
+                            onChange={(e) =>
+                              setDepositAmount(e.target.value)
+                            }
+                            required
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          className="btn btn-primary"
+                        >
+                          DEPOSIT
+                        </button>
+                      </form>
+                    </div>
+                  </Tab>
+                  <Tab eventKey="withdraw" title="Withdraw">
                     <br></br>
-                    How much do you want to deposit?
+                    Do you want to withdraw + take interest?
                     <br></br>
-                    (min. amount is 0.01 ETH)
                     <br></br>
-                    (1 deposit is possible at the time)
-                    <br></br>
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        let amountLocal = depositAmount;
-                        amountLocal = amountLocal * 10 ** 18; //convert to wei
-                        deposit(amountLocal);
-                      }}
-                    >
-                      <div className="form-group mr-sm-2">
-                        <br></br>
-                        <input
-                          id="depositAmount"
-                          step="0.01"
-                          type="number"
-                          placeholder="amount..."
-                          onChange={(e) =>
-                            setDepositAmount(e.target.value)
-                          }
-                          required
-                        />
-                      </div>
+                    <div>
                       <button
                         type="submit"
                         className="btn btn-primary"
+                        onClick={(e) => withdraw(e)}
                       >
-                        DEPOSIT
+                        WITHDRAW
                       </button>
-                    </form>
-                  </div>
-                </Tab>
-                <Tab eventKey="withdraw" title="Withdraw">
-                  <br></br>
-                  Do you want to withdraw + take interest?
-                  <br></br>
-                  <br></br>
-                  <div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      onClick={(e) => withdraw(e)}
-                    >
-                      WITHDRAW
-                    </button>
-                  </div>
-                </Tab>
-                {/* <Tab eventKey="borrow" title="Borrow">
+                    </div>
+                  </Tab>
+                  {/* <Tab eventKey="borrow" title="Borrow">
                   <div>
                     <br></br>
                     Do you want to borrow tokens?
@@ -290,18 +329,36 @@ function App() {
                     </button>
                   </div>
                 </Tab> */}
-              </Tabs>
+                </Tabs>
+              </div>
+            </main>
+          </div>
+          {status === APP_STATUS.ACTION_LOADING && (
+            <div
+              className="mt-2"
+              style={{
+                // height: "75vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                // flexDirection: "column",
+                gap: "1rem",
+              }}
+            >
+              <Spinner animation="border" role="status">
+                {/* <span className="visually-hidden">Loading...</span> */}
+              </Spinner>
             </div>
-          </main>
+          )}
         </div>
-      </div>
-      <footer class="d-flex flex-wrap justify-content-center align-items-center py-3 my-4 border-top">
+      )}
+      <footer className="d-flex flex-wrap justify-content-center align-items-center py-3 my-4 border-top">
         <div>
-          <span class="text-muted">Developer: NUR</span>
-          <span class="text-muted ml-2">
+          <span>Developer: NUR</span>
+          <span className=" ml-2">
             email: medo0o6665@gmail.com
           </span>
-          <span class="text-muted ml-2">github: nur1208</span>
+          <span className=" ml-2">github: nur1208</span>
         </div>
       </footer>
     </div>
