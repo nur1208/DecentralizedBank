@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Tabs, Tab } from "react-bootstrap";
-// import { init, mintToken } from "./Web3Client";
+import { init, mintToken } from "./Web3Client";
 import Token from "./abis/Token.json";
 import DBank from "./abis/DBank.json";
 
@@ -114,6 +114,7 @@ function App() {
   };
   useEffect(() => {
     (async () => {
+      await init();
       await loadBlockchainData();
       // await deposit(10 ** 16);
     })();
